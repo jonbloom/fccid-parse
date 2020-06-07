@@ -9,6 +9,7 @@ from tqdm import tqdm
 load_dotenv()
 
 DISCORD_WEBHOOK_URL = os.getenv('DISCORD_WEBHOOK_URL')
+DISCORD_ROLE_ID = os.getenv('DISCORD_ROLE_ID')
 FCCID = os.getenv('FCCID')
 URL = f"https://fccid.io/{FCCID}"
 
@@ -28,7 +29,7 @@ class FCCApplication(Model):
 
 def send_to_discord(which, old, new):
     payload = {
-        "content": f"{which} | {new['name']} <@&655296026344816645>",
+        "content": f"{which} | {new['name']} <@&{DISCORD_ROLE_ID}>",
         "embeds": [{
             "title":  new['name'],
             "fields": [

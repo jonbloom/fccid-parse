@@ -11,4 +11,4 @@ python3 -m virtualenv venv
 pip install -r requirements.txt
 ```
 
-Specify a `DISCORD_WEBHOOK_URL` and `FCCID` in a `.env` file, then run `python3 scrape.py`.
+Specify a `DISCORD_WEBHOOK_URL`, `DISCORD_ROLE_ID`, and `FCCID` in a `.env` file, then run `python3 scrape.py`.
