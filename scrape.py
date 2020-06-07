@@ -9,10 +9,12 @@ from tqdm import tqdm
 load_dotenv()
 
 DISCORD_WEBHOOK_URL = os.getenv('DISCORD_WEBHOOK_URL')
-URL = "https://fccid.io/SWX"
+FCCID = os.getenv('FCCID')
+URL = f"https://fccid.io/{FCCID}"
 
 
 db = SqliteDatabase('./fcc.sqlite')
+
 
 class FCCApplication(Model):
     id = TextField(primary_key=True)
@@ -22,6 +24,7 @@ class FCCApplication(Model):
 
     class Meta:
         database = db
+
 
 def send_to_discord(which, old, new):
     payload = {
@@ -52,10 +55,10 @@ def send_to_discord(which, old, new):
         })
         payload['embeds'][0]['color'] = 31743
     payload['embeds'][0]['fields'].append({
-            "name": "Date",
-            "value": new['date']
-        })
-    
+        "name": "Date",
+        "value": new['date']
+    })
+
     webhook_req = requests.post(DISCORD_WEBHOOK_URL, json=payload)
     sleep(1.5)
     rate_limited = (webhook_req.status_code == 429)
@@ -70,10 +73,6 @@ def send_to_discord(which, old, new):
                 countdown = webhook_req.json()['retry_after']/1000 + 1
 
 
-        
-    
-    
-
 def save_to_db(application):
     new = True
     try:
@@ -81,7 +80,7 @@ def save_to_db(application):
         new = False
         if _application.status != application['status']:
             send_to_discord('UPDATED', _application, application)
-            
+
     except FCCApplication.DoesNotExist:
         _application = FCCApplication()
     _application.id = application['fcc_id']
@@ -92,7 +91,6 @@ def save_to_db(application):
 
     if new:
         send_to_discord('NEW', None, application)
-        
 
 
 def get_applications():
@@ -120,7 +118,6 @@ def get_applications():
 def main():
     for application in tqdm(get_applications()):
         save_to_db(application)
-            
 
 
 if __name__ == "__main__":
